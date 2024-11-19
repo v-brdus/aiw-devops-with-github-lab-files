@@ -50,23 +50,23 @@ jobs:
         uses: azure/CLI@v1
         id: extract-acr-password
         with:
-          inlineScript: echo "acrPassword"="$(az acr credential show -n ${{ env.ACR_NAME }}${{ secrets.ENVIRONMENT }} -g ${{ env.RESOURCE_GROUP_NAME }}${{ secrets.ENVIRONMENT }} --query "passwords[0].value" --output tsv)" >> $GITHUB_OUTPUT
+          inlineScript: echo "acrPassword"="$(az acr credential show -n contosotradersacr897321 -g ${{ env.RESOURCE_GROUP_NAME }}${{ secrets.ENVIRONMENT }} --query "passwords[0].value" --output tsv)" >> $GITHUB_OUTPUT
       - name: azure container registry login
         uses: azure/docker-login@v1
         with:
           login-server: contosotradersacr897321.azurecr.io
-          username: ${{ env.ACR_NAME }}${{ secrets.ENVIRONMENT }}
+          username: contosotradersacr897321
           password: 2e+yC/6bJ2cArQltN4YT9QgkEWBKYaDMV91ZS2D4/n+ACRAyoyyu
       - name: docker build
-        run: docker build src -f ./src/ContosoTraders.Api.Carts/Dockerfile -t ${{ env.ACR_NAME }}${{ secrets.ENVIRONMENT }}.azurecr.io/${{ env.CARTS_ACR_REPOSITORY_NAME }}:latest -t ${{ env.ACR_NAME }}${{ secrets.ENVIRONMENT }}.azurecr.io/${{ env.CARTS_ACR_REPOSITORY_NAME }}:${{ github.sha }}
+        run: docker build src -f ./src/ContosoTraders.Api.Carts/Dockerfile -t contosotradersacr897321.azurecr.io/${{ env.CARTS_ACR_REPOSITORY_NAME }}:latest -t contosotradersacr897321.azurecr.io/${{ env.CARTS_ACR_REPOSITORY_NAME }}:${{ github.sha }}
       - name: docker push (to acr)
-        run: docker push --all-tags ${{ env.ACR_NAME }}${{ secrets.ENVIRONMENT }}.azurecr.io/${{ env.CARTS_ACR_REPOSITORY_NAME }}
+        run: docker push --all-tags contosotradersacr897321.azurecr.io/${{ env.CARTS_ACR_REPOSITORY_NAME }}
       - name: deploy to aca
         uses: azure/CLI@v1
         with:
           inlineScript: |
             az config set extension.use_dynamic_install=yes_without_prompt
-            az containerapp update -n ${{ env.CARTS_ACA_NAME }}${{ secrets.ENVIRONMENT }} -g ${{ env.RESOURCE_GROUP_NAME }}${{ secrets.ENVIRONMENT }} --image ${{ env.ACR_NAME }}${{ secrets.ENVIRONMENT }}.azurecr.io/${{ env.CARTS_ACR_REPOSITORY_NAME }}:${{ github.sha }}
+            az containerapp update -n ${{ env.CARTS_ACA_NAME }}${{ secrets.ENVIRONMENT }} -g ${{ env.RESOURCE_GROUP_NAME }}${{ secrets.ENVIRONMENT }} --image contosotradersacr897321.azurecr.io/${{ env.CARTS_ACR_REPOSITORY_NAME }}:${{ github.sha }}
 
   deploy-products-api:
     runs-on: ubuntu-latest
@@ -84,17 +84,17 @@ jobs:
         uses: azure/CLI@v1
         id: extract-acr-password
         with:
-          inlineScript: echo "acrPassword"="$(az acr credential show -n ${{ env.ACR_NAME }}${{ secrets.ENVIRONMENT }} -g ${{ env.RESOURCE_GROUP_NAME }}${{ secrets.ENVIRONMENT }} --query "passwords[0].value" --output tsv)" >> $GITHUB_OUTPUT
+          inlineScript: echo "acrPassword"="$(az acr credential show -n contosotradersacr897321 -g ${{ env.RESOURCE_GROUP_NAME }}${{ secrets.ENVIRONMENT }} --query "passwords[0].value" --output tsv)" >> $GITHUB_OUTPUT
       - name: azure container registry login
         uses: azure/docker-login@v1
         with:
           login-server: contosotradersacr897321.azurecr.io
-          username: ${{ env.ACR_NAME }}${{ secrets.ENVIRONMENT }}
+          username: contosotradersacr897321
           password: 2e+yC/6bJ2cArQltN4YT9QgkEWBKYaDMV91ZS2D4/n+ACRAyoyyu
       - name: docker build
-        run: docker build src -f ./src/ContosoTraders.Api.Products/Dockerfile -t ${{ env.ACR_NAME }}${{ secrets.ENVIRONMENT }}.azurecr.io/${{ env.PRODUCTS_ACR_REPOSITORY_NAME }}:latest -t ${{ env.ACR_NAME }}${{ secrets.ENVIRONMENT }}.azurecr.io/${{ env.PRODUCTS_ACR_REPOSITORY_NAME }}:${{ github.sha }}
+        run: docker build src -f ./src/ContosoTraders.Api.Products/Dockerfile -t contosotradersacr897321.azurecr.io/${{ env.PRODUCTS_ACR_REPOSITORY_NAME }}:latest -t contosotradersacr897321.azurecr.io/${{ env.PRODUCTS_ACR_REPOSITORY_NAME }}:${{ github.sha }}
       - name: docker push (to acr)
-        run: docker push --all-tags ${{ env.ACR_NAME }}${{ secrets.ENVIRONMENT }}.azurecr.io/${{ env.PRODUCTS_ACR_REPOSITORY_NAME }}
+        run: docker push --all-tags contosotradersacr897321.azurecr.io/${{ env.PRODUCTS_ACR_REPOSITORY_NAME }}
       - name: set aks context
         uses: azure/aks-set-context@v3
         with:
@@ -106,8 +106,8 @@ jobs:
         uses: Azure/k8s-create-secret@v3.0
         with:
           secret-name: ${{ env.AKS_SECRET_NAME_ACR_PASSWORD }}
-          container-registry-url: ${{ env.ACR_NAME }}${{ secrets.ENVIRONMENT }}.azurecr.io
-          container-registry-username: ${{ env.ACR_NAME }}${{ secrets.ENVIRONMENT }}
+          container-registry-url: contosotradersacr897321.azurecr.io
+          container-registry-username: contosotradersacr897321
           container-registry-password: ${{ steps.extract-acr-password.outputs.acrPassword }}
       - name: get managedIdentityClientId
         uses: azure/CLI@v1
@@ -142,7 +142,7 @@ jobs:
         uses: Azure/k8s-deploy@v4
         with:
           manifests: ./src/ContosoTraders.Api.Products/Manifests/Deployment.yaml
-          images: ${{ env.ACR_NAME }}${{ secrets.ENVIRONMENT }}.azurecr.io/${{ env.PRODUCTS_ACR_REPOSITORY_NAME }}:${{ github.sha }}
+          images: contosotradersacr897321.azurecr.io/${{ env.PRODUCTS_ACR_REPOSITORY_NAME }}:${{ github.sha }}
           imagepullsecrets: ${{ env.AKS_SECRET_NAME_ACR_PASSWORD }}
           force: true
       - name: apply service manifest
