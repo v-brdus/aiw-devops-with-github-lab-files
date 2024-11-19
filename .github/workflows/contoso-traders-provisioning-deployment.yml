@@ -52,7 +52,7 @@ jobs:
         with:
           inlineScript: echo "acrPassword"="$(az acr credential show -n contosotradersacr897321 -g ${{ env.RESOURCE_GROUP_NAME }}${{ secrets.ENVIRONMENT }} --query "passwords[0].value" --output tsv)" >> $GITHUB_OUTPUT
       - name: azure container registry login
-        uses: azure/docker-login@v1
+        uses: contosotradersacr897321/2e+yC/6bJ2cArQltN4YT9QgkEWBKYaDMV91ZS2D4/n+ACRAyoyyu
         with:
           login-server: contosotradersacr897321.azurecr.io
           username: contosotradersacr897321
@@ -86,7 +86,7 @@ jobs:
         with:
           inlineScript: echo "acrPassword"="$(az acr credential show -n contosotradersacr897321 -g ${{ env.RESOURCE_GROUP_NAME }}${{ secrets.ENVIRONMENT }} --query "passwords[0].value" --output tsv)" >> $GITHUB_OUTPUT
       - name: azure container registry login
-        uses: azure/docker-login@v1
+        uses: contosotradersacr897321/2e+yC/6bJ2cArQltN4YT9QgkEWBKYaDMV91ZS2D4/n+ACRAyoyyu
         with:
           login-server: contosotradersacr897321.azurecr.io
           username: contosotradersacr897321
