@@ -66,7 +66,7 @@ jobs:
         with:
           inlineScript: |
             az config set extension.use_dynamic_install=yes_without_prompt
-            az containerapp update -n ${{ env.CARTS_ACA_NAME }}${{ secrets.ENVIRONMENT }} -g ${{ env.RESOURCE_GROUP_NAME }}${{ secrets.ENVIRONMENT }} --image contosotradersacr897321.azurecr.io/${{ env.CARTS_ACR_REPOSITORY_NAME }}:${{ github.sha }}
+            az containerapp update -n contoso-traders-carts897321 -g ${{ env.RESOURCE_GROUP_NAME }}${{ secrets.ENVIRONMENT }} --image contosotradersacr897321.azurecr.io/${{ env.CARTS_ACR_REPOSITORY_NAME }}:${{ github.sha }}
 
   deploy-products-api:
     runs-on: ubuntu-latest
