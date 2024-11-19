@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { CartService } from "./services";
 import Meeting from './pages/home/components/videoCall/Meeting';
 
-import { Header, Footer, Appbar, HeaderMessage } from "./shared";
+import { Header, Footer, Appbar } from "./shared";
 import {
   Home,
   List,
@@ -17,13 +17,12 @@ import {
   RefundPolicy,
   TermsOfService,
   AboutUs,
-  ErrorPage,
-  Cart,
+  ErrorPage
 } from "./pages";
 
 import "./i18n";
 import "./main.scss";
-import warningIcon from './assets/images/original/Contoso_Assets/Icons/information_icon.svg'
+
 
 class App extends Component {
   constructor() {
@@ -89,8 +88,7 @@ class App extends Component {
       <div className="App">
         <Fragment>
           <div className="mainHeader">
-            <HeaderMessage type="warning" icon={warningIcon} message="This Is A Demo Store For Testing Purposes — No Orders Shall Be Fulfilled."/>
-            <Appbar quantity={quantity} />
+            <Appbar />
             {this.props.history.location.pathname === '/' || this.props.history.location.pathname === '/new-arrivals' ?
               <Header quantity={quantity} />
               :
@@ -116,8 +114,7 @@ class App extends Component {
             <Route path="/terms-of-service" component={TermsOfService} />
             <Route path="/about-us" component={AboutUs} />
             <PrivateRoute path="/coupons" component={MyCoupons} />
-            <PrivateRoute path="/profile/:page" component={Profile} />
-            <PrivateRoute path="/cart" component={Cart}/>
+            <PrivateRoute path="/profile" component={Profile} />
             <PrivateRoute
               path="/shopping-cart"
               component={ShoppingCart}

@@ -3,20 +3,18 @@ import axios from "axios";
 require("dotenv").config();
 const settingsUrl = "/api/settings";
 
-// Note: The '{PRODUCTS_API_ENDPOINT}', '{CARTS_API_ENDPOINT}' tokens will be substituted by github workflow.
-const APIUrl = process.env.REACT_APP_APIUrl;
-const APIUrlShoppingCart = process.env.REACT_APP_APIUrlShoppingCart;
+// const APIUrl = process.env.REACT_APP_DEV_API_URL;
+// const APIUrlShoppingCart = process.env.REACT_APP_API_URL_SHOPPINGCART;
+// @TODO: Replace 'test' in the next two lines with whatever your ENVIRONMENT github secret value is
+const APIUrl = 'http://contoso-traders-productsdeploymentidvalue.eastus.cloudapp.azure.com/v1';
+const APIUrlShoppingCart = 'https://contoso-traders-cartsdeploymentidvalue.orangeflower-95b09b9d.eastus.azurecontainerapps.io/v1';
 const UseB2C = process.env.REACT_APP_USEB2C;
 const B2cAuthority = process.env.REACT_APP_B2CAUTHORITY;
-const B2cClientId =  process.env.REACT_APP_B2CCLIENTID;
+const B2cClientId = process.env.REACT_APP_B2CCLIENTID;
 const B2cScopes = process.env.REACT_APP_B2CSCOPES;
-const userEmail = localStorage.getItem('state') ? JSON.parse(localStorage.getItem('state')).userName : null;
 
 const _HeadersConfig = (token, devspaces = undefined) => {
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
-  if(userEmail){
-    headers['x-tt-email'] = userEmail
-  }
   if (devspaces) {
     headers["azds-route-as"] = devspaces;
   }

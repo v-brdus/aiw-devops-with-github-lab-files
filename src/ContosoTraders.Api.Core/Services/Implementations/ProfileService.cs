@@ -6,7 +6,7 @@ internal class ProfileService : ContosoTradersServiceBase, IProfileService
 {
     private readonly ProfilesDbContext _profileRepository;
 
-    public ProfileService(ProfilesDbContext profileRepository, IMapper mapper, IConfiguration configuration, ILogger<ProfileService> logger) : base(mapper, configuration, logger)
+    public ProfileService(ProfilesDbContext profileRepository, IMapper mapper, IConfiguration configuration) : base(mapper, configuration)
     {
         _profileRepository = profileRepository;
     }

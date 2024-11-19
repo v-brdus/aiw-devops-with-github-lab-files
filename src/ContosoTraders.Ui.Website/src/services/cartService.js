@@ -43,16 +43,6 @@ const CartService = {
             typeid: detailProduct.type.id
         };
 
-        const cartItems = {
-            "cartItemId": '2',
-            "email": detailProduct.email,
-            "productId": detailProduct.id,
-            "name": detailProduct.name,
-            "price": detailProduct.price,
-            "imageUrl": detailProduct.imageUrl,
-            "quantity": 1,
-        };
-
         const dataToPost = { detailProduct: productInfo, qty: 1 };
 
         if (ConfigService._byPassShoppingCartApi) {
@@ -60,7 +50,7 @@ const CartService = {
             return { message: "Product added on shopping cart" };
         }
 
-        const addProduct = axios.post(`${ConfigService._apiUrlShoppingCart}/shoppingcart`, cartItems, ConfigService.HeadersConfig(token))
+        const addProduct = axios.post(`${ConfigService._apiUrlShoppingCart}/shoppingcart`, dataToPost, ConfigService.HeadersConfig(token))
             .then((response) => {
                 return response.data;
             })

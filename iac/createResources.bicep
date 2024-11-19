@@ -8,7 +8,8 @@ targetScope = 'resourceGroup'
 @minLength(3)
 @maxLength(6)
 @description('A unique environment name (max 6 characters, alphanumeric only).')
-param env string
+param environment string
+
 
 param sqlPassword string
 
@@ -24,14 +25,11 @@ param prefix string = 'contosotraders'
 
 param prefixHyphenated string = 'contoso-traders'
 
-// sql
-param sqlServerHostName string = environment().suffixes.sqlServerHostname
-
 // variables
 ////////////////////////////////////////////////////////////////////////////////
 
 // key vault
-var kvName = '${prefix}kv${env}'
+var kvName = '${prefix}kv${environment}'
 var kvSecretNameProductsApiEndpoint = 'productsApiEndpoint'
 var kvSecretNameProductsDbConnStr = 'productsDbConnectionString'
 var kvSecretNameProfilesDbConnStr = 'profilesDbConnectionString'
@@ -40,82 +38,77 @@ var kvSecretNameCartsApiEndpoint = 'cartsApiEndpoint'
 var kvSecretNameCartsDbConnStr = 'cartsDbConnectionString'
 var kvSecretNameImagesEndpoint = 'imagesEndpoint'
 var kvSecretNameAppInsightsConnStr = 'appInsightsConnectionString'
-var kvSecretNameUiCdnEndpoint = 'uiCdnEndpoint'
-
-// user-assigned managed identity (for key vault access)
-var userAssignedMIForKVAccessName = '${prefixHyphenated}-mi-kv-access${env}'
 
 // cosmos db (stocks db)
-var stocksDbAcctName = '${prefixHyphenated}-stocks${env}'
+var stocksDbAcctName = '${prefixHyphenated}-stocks${environment}'
 var stocksDbName = 'stocksdb'
 var stocksDbStocksContainerName = 'stocks'
 
 // cosmos db (carts db)
-var cartsDbAcctName = '${prefixHyphenated}-carts${env}'
+var cartsDbAcctName = '${prefixHyphenated}-carts${environment}'
 var cartsDbName = 'cartsdb'
 var cartsDbStocksContainerName = 'carts'
 
 // sql azure (products db)
-var productsDbServerName = '${prefixHyphenated}-products${env}'
+var productsDbServerName = '${prefixHyphenated}-products${environment}'
 var productsDbName = 'productsdb'
 var productsDbServerAdminLogin = 'localadmin'
 var productsDbServerAdminPassword = sqlPassword
 
 // sql azure (profiles db)
-var profilesDbServerName = '${prefixHyphenated}-profiles${env}'
+var profilesDbServerName = '${prefixHyphenated}-profiles${environment}'
 var profilesDbName = 'profilesdb'
 var profilesDbServerAdminLogin = 'localadmin'
 var profilesDbServerAdminPassword = sqlPassword
 
 // azure container app (carts api)
-var cartsApiAcaName = '${prefixHyphenated}-carts${env}'
-var cartsApiAcaEnvName = '${prefix}acaenv${env}'
+var cartsApiAcaName = '${prefixHyphenated}-carts${environment}'
+var cartsApiAcaEnvName = '${prefix}acaenv${environment}'
 var cartsApiAcaSecretAcrPassword = 'acr-password'
-var cartsApiAcaContainerDetailsName = '${prefixHyphenated}-carts${env}'
-var cartsApiSettingNameKeyVaultEndpoint = 'KeyVaultEndpoint'
-var cartsApiSettingNameManagedIdentityClientId = 'ManagedIdentityClientId'
+var cartsApiAcaContainerDetailsName = '${prefixHyphenated}-carts${environment}'
 
 // storage account (product images)
-var productImagesStgAccName = '${prefix}img${env}'
+var productImagesStgAccName = '${prefix}img${environment}'
 var productImagesProductDetailsContainerName = 'product-details'
 var productImagesProductListContainerName = 'product-list'
 
 // storage account (old website)
-var uiStgAccName = '${prefix}ui${env}'
+var uiStgAccName = '${prefix}ui${environment}'
 
 // storage account (new website)
-var ui2StgAccName = '${prefix}ui2${env}'
+var ui2StgAccName = '${prefix}ui2${environment}'
 
 // storage account (image classifier)
-var imageClassifierStgAccName = '${prefix}ic${env}'
+var imageClassifierStgAccName = '${prefix}ic${environment}'
 var imageClassifierWebsiteUploadsContainerName = 'website-uploads'
 
-
 // cdn
-var cdnProfileName = '${prefixHyphenated}-cdn${env}'
-var cdnImagesEndpointName = '${prefixHyphenated}-images${env}'
-var cdnUiEndpointName = '${prefixHyphenated}-ui${env}'
-var cdnUi2EndpointName = '${prefixHyphenated}-ui2${env}'
+var cdnProfileName = '${prefixHyphenated}-cdn${environment}'
+var cdnImagesEndpointName = '${prefixHyphenated}-images${environment}'
+var cdnUiEndpointName = '${prefixHyphenated}-ui${environment}'
+var cdnUi2EndpointName = '${prefixHyphenated}-ui2${environment}'
 
+// redis cache
+var redisCacheName = '${prefixHyphenated}-cache${environment}'
 
 // azure container registry
-var acrName = '${prefix}acr${env}'
+var acrName = '${prefix}acr${environment}'
 // var acrCartsApiRepositoryName = '${prefix}apicarts' // @TODO: unused, probably remove later
 
 // load testing service
-var loadTestSvcName = '${prefixHyphenated}-loadtest${env}'
+var loadTestSvcName = '${prefixHyphenated}-loadtest${environment}'
 
 // application insights
-var logAnalyticsWorkspaceName = '${prefixHyphenated}-loganalytics${env}'
-var appInsightsName = '${prefixHyphenated}-ai${env}'
+var logAnalyticsWorkspaceName = '${prefixHyphenated}-loganalytics${environment}'
+var appInsightsName = '${prefixHyphenated}-ai${environment}'
 
 // portal dashboard
-var portalDashboardName = '${prefixHyphenated}-dashboard${env}'
+var portalDashboardName = '${prefixHyphenated}-dashboard${environment}'
 
 // aks cluster
-var aksClusterName = '${prefixHyphenated}-aks${env}'
-var aksClusterDnsPrefix = '${prefixHyphenated}-aks${env}'
-var aksClusterNodeResourceGroup = '${prefixHyphenated}-aks-nodes-rg-${env}'
+var aksClusterName = '${prefixHyphenated}-aks${environment}'
+var aksClusterDnsPrefix = '${prefixHyphenated}-aks${environment}'
+var aksClusterNodeResourceGroup = '${prefixHyphenated}-aks-nodes-rg'
 
 // tags
 var resourceTags = {
@@ -177,7 +170,7 @@ resource kv 'Microsoft.KeyVault/vaults@2022-07-01' = {
     tags: resourceTags
     properties: {
       contentType: 'connection string to the products db'
-      value: 'Server=tcp:${productsDbServerName}${sqlServerHostName},1433;Initial Catalog=${productsDbName};Persist Security Info=False;User ID=${productsDbServerAdminLogin};Password=${productsDbServerAdminPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+      value: 'Server=tcp:${productsDbServerName}.database.windows.net,1433;Initial Catalog=${productsDbName};Persist Security Info=False;User ID=${productsDbServerAdminLogin};Password=${productsDbServerAdminPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;' // @TODO: hack, fix later
     }
   }
 
@@ -187,7 +180,7 @@ resource kv 'Microsoft.KeyVault/vaults@2022-07-01' = {
     tags: resourceTags
     properties: {
       contentType: 'connection string to the profiles db'
-      value: 'Server=tcp:${profilesDbServerName}${sqlServerHostName},1433;Initial Catalog=${profilesDbName};Persist Security Info=False;User ID=${profilesDbServerAdminLogin};Password=${profilesDbServerAdminPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+      value: 'Server=tcp:${profilesDbServerName}.database.windows.net,1433;Initial Catalog=${profilesDbName};Persist Security Info=False;User ID=${profilesDbServerAdminLogin};Password=${profilesDbServerAdminPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;' // @TODO: hack, fix later
     }
   }
 
@@ -241,16 +234,6 @@ resource kv 'Microsoft.KeyVault/vaults@2022-07-01' = {
     }
   }
 
-  // secret
-  resource kv_secretUiCdnEndpoint 'secrets' = {
-    name: kvSecretNameUiCdnEndpoint
-    tags: resourceTags
-    properties: {
-      contentType: 'endpoint url (cdn endpoint) of the ui'
-      value: cdnprofile_ui2endpoint.properties.hostName
-    }
-  }
-
   // access policies
   resource kv_accesspolicies 'accessPolicies' = {
     name: 'replace'
@@ -260,14 +243,14 @@ resource kv 'Microsoft.KeyVault/vaults@2022-07-01' = {
       accessPolicies: [
         {
           tenantId: tenantId
-          objectId: userassignedmiforkvaccess.properties.principalId
+          objectId: cartsapiaca.identity.principalId
           permissions: {
             secrets: [ 'get', 'list' ]
           }
         }
         {
           tenantId: tenantId
-          objectId: aks.properties.identityProfile.kubeletidentity.objectId
+          objectId: loadtestsvc.identity.principalId
           permissions: {
             secrets: [ 'get', 'list' ]
           }
@@ -275,12 +258,6 @@ resource kv 'Microsoft.KeyVault/vaults@2022-07-01' = {
       ]
     }
   }
-}
-
-resource userassignedmiforkvaccess 'Microsoft.ManagedIdentity/userAssignedIdentities@2022-01-31-preview' = {
-  name: userAssignedMIForKVAccessName
-  location: resourceLocation
-  tags: resourceTags
 }
 
 //
@@ -391,7 +368,6 @@ resource cartsdba 'Microsoft.DocumentDB/databaseAccounts@2022-02-15-preview' = {
   }
 }
 
-
 //
 // products db
 //
@@ -498,11 +474,7 @@ resource cartsapiaca 'Microsoft.App/containerApps@2022-06-01-preview' = {
   location: resourceLocation
   tags: resourceTags
   identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedmiforkvaccess.id}': {
-      }
-    }
+    type: 'SystemAssigned'
   }
   properties: {
     configuration: {
@@ -552,12 +524,8 @@ resource cartsapiaca 'Microsoft.App/containerApps@2022-06-01-preview' = {
         {
           env: [
             {
-              name: cartsApiSettingNameKeyVaultEndpoint
+              name: 'KeyVaultEndpoint'
               value: kv.properties.vaultUri
-            }
-            {
-              name: cartsApiSettingNameManagedIdentityClientId
-              value: userassignedmiforkvaccess.properties.clientId
             }
           ]
           // using a public image initially because no images have been pushed to our private ACR yet
@@ -835,13 +803,13 @@ resource cdnprofile_imagesendpoint 'Microsoft.Cdn/profiles/endpoints@2022-05-01-
         }
       ]
     }
-    originHostHeader: replace(replace(productimagesstgacc.properties.primaryEndpoints.blob, 'https://', ''), '/', '')
+    originHostHeader: '${productImagesStgAccName}.blob.core.windows.net' // @TODO: Hack, fix later
     origins: [
       {
-        name: replace(replace(replace(productimagesstgacc.properties.primaryEndpoints.blob, 'https://', ''), '/', ''), '.', '-')
+        name: '${productImagesStgAccName}-blob-core-windows-net' // @TODO: Hack, fix later
         properties: {
-          hostName: replace(replace(productimagesstgacc.properties.primaryEndpoints.blob, 'https://', ''), '/', '')
-          originHostHeader: replace(replace(productimagesstgacc.properties.primaryEndpoints.blob, 'https://', ''), '/', '')
+          hostName: '${productImagesStgAccName}.blob.core.windows.net' // @TODO: Hack, fix later
+          originHostHeader: '${productImagesStgAccName}.blob.core.windows.net' // @TODO: Hack, fix later
         }
       }
     ]
@@ -918,13 +886,13 @@ resource cdnprofile_uiendpoint 'Microsoft.Cdn/profiles/endpoints@2022-05-01-prev
         }
       ]
     }
-    originHostHeader: replace(replace(uistgacc.properties.primaryEndpoints.web, 'https://', ''), '/', '')
+    originHostHeader: '${uiStgAccName}.z13.web.core.windows.net' // @TODO: Hack, fix later
     origins: [
       {
-        name: replace(replace(replace(uistgacc.properties.primaryEndpoints.web, 'https://', ''), '/', ''), '.', '-')
+        name: '${uiStgAccName}-z13-web-core-windows-net' // @TODO: Hack, fix later
         properties: {
-          hostName: replace(replace(uistgacc.properties.primaryEndpoints.web, 'https://', ''), '/', '')
-          originHostHeader: replace(replace(uistgacc.properties.primaryEndpoints.web, 'https://', ''), '/', '')
+          hostName: '${uiStgAccName}.z13.web.core.windows.net' // @TODO: Hack, fix later
+          originHostHeader: '${uiStgAccName}.z13.web.core.windows.net' // @TODO: Hack, fix later
         }
       }
     ]
@@ -1029,19 +997,35 @@ resource cdnprofile_ui2endpoint 'Microsoft.Cdn/profiles/endpoints@2022-05-01-pre
         }
       ]
     }
-    originHostHeader: replace(replace(ui2stgacc.properties.primaryEndpoints.web, 'https://', ''), '/', '')
+    originHostHeader: '${ui2StgAccName}.z13.web.core.windows.net' // @TODO: Hack, fix later
     origins: [
       {
-        name: replace(replace(replace(ui2stgacc.properties.primaryEndpoints.web, 'https://', ''), '/', ''), '.', '-')
+        name: '${ui2StgAccName}-z13-web-core-windows-net' // @TODO: Hack, fix later
         properties: {
-          hostName: replace(replace(ui2stgacc.properties.primaryEndpoints.web, 'https://', ''), '/', '')
-          originHostHeader: replace(replace(ui2stgacc.properties.primaryEndpoints.web, 'https://', ''), '/', '')
+          hostName: '${ui2StgAccName}.z13.web.core.windows.net' // @TODO: Hack, fix later
+          originHostHeader: '${ui2StgAccName}.z13.web.core.windows.net' // @TODO: Hack, fix later
         }
       }
     ]
   }
 }
 
+//
+// redis cache
+//
+
+resource rediscache 'Microsoft.Cache/redis@2022-06-01' = {
+  name: redisCacheName
+  location: resourceLocation
+  tags: resourceTags
+  properties: {
+    sku: {
+      capacity: 0
+      family: 'C'
+      name: 'Basic'
+    }
+  }
+}
 
 //
 // container registry
@@ -1069,11 +1053,7 @@ resource loadtestsvc 'Microsoft.LoadTestService/loadTests@2022-12-01' = {
   location: resourceLocation
   tags: resourceTags
   identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedmiforkvaccess.id}': {
-      }
-    }
+    type: 'SystemAssigned'
   }
 }
 
@@ -1168,19 +1148,17 @@ resource aks 'Microsoft.ContainerService/managedClusters@2022-09-02-preview' = {
         ]
       }
     }
-    addonProfiles: {
-      omsagent: {
-        enabled: true
-        config: {
-          logAnalyticsWorkspaceResourceID: loganalyticsworkspace.id
-        }
-      }
-    }
+    // Note: Commented out due to github issue #84: https://github.com/CloudLabs-AI/ContosoTraders/issues/84
+    // addonProfiles: {
+    //   omsagent: {
+    //     enabled: true
+    //     config: {
+    //       logAnalyticsWorkspaceResourceID: loganalyticsworkspace.id
+    //     }
+    //   }
+    // }
   }
 }
 
 // outputs
 ////////////////////////////////////////////////////////////////////////////////
-
-output cartsApiEndpoint string = 'https://${cartsapiaca.properties.configuration.ingress.fqdn}'
-output uiCdnEndpoint string = 'https://${cdnprofile_ui2endpoint.properties.hostName}'

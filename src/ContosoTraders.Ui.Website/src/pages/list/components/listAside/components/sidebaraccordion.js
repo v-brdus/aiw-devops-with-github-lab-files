@@ -1,14 +1,13 @@
 
-import React, { useRef, createRef } from "react";
+import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import MuiAccordion from "@material-ui/core/Accordion";
 import MuiAccordionSummary from "@material-ui/core/AccordionSummary";
 import MuiAccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
-import { Grid } from "@material-ui/core";
+import { Checkbox, FormControlLabel, Grid } from "@material-ui/core";
 import description_off from '../../../../../assets/images/original/Contoso_Assets/Icons/plus.png'
 import description_on from '../../../../../assets/images/original/Contoso_Assets/Icons/minus.png'
-import { useParams } from "react-router-dom";
 const Accordion = withStyles({
   root: {
     // border: "1px solid rgba(0, 0, 0, .125)",
@@ -53,10 +52,6 @@ const AccordionDetails = withStyles((theme) => ({
 
 export default function SidebarAccordion(props) {
   const [expanded, setExpanded] = React.useState("panel1");
-  const { code } = useParams();
-  const dataType = props.id;
-  const checkRef = useRef([])
-  checkRef.current = props.data && props.data.map((_, i) => checkRef.current[i] ?? createRef());
   // const [color, setColorState] = React.useState({ blue : true });
   const [checkedItems, setCheckedItems] =  React.useState(new Map());
   const handleChange = (panel) => (event, newExpanded) => {
@@ -71,27 +66,7 @@ export default function SidebarAccordion(props) {
     setCheckedItems(checkedItems.set(item, isChecked));
     props.onFilterChecked(e, dataType);
   };
-
-  React.useEffect(() => {
-    
-    if(code === 'all-products'){
-      props.data && props.data.forEach((item)=>{
-        setCheckedItems(new Map().set(`brand${item.id}`, false));
-      });
-      checkRef.current && checkRef.current.forEach((item)=>{
-        if(item.current.checked && item.current.checked === true){
-          item.current.checked = false;
-          let ele = item.current;
-          ele.target = item.current;
-          ele.target.name = item.current.name;
-          props.onFilterChecked(ele, dataType);
-        }
-      })      
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [code]);
-
-  
+  const dataType = props.id;
   return (
     <div className="AccordionSection">
       <Accordion
@@ -116,22 +91,10 @@ export default function SidebarAccordion(props) {
         <AccordionDetails>
           <Grid container spacing={2}>
             {props.data && props.data.map((item,key) => (
-              <Grid key={key} item xs={12} className="descpAttributes">
-                <input type='checkbox' 
-                  className="MuiCheckbox-root"
-                  ref={checkRef.current[key]} 
-                  checked={checkedItems.get(`brand${item.id}`)} 
-                  name={`brand${item.id}`} 
-                  id={item.id}
-                  onChange={(e)=>{
-                    handleChangeBrands(e, dataType)
-                  }}
-                />
-                <label className={`label ${checkedItems.get(`brand${item.id}`) ? "Mui-checked" : "" }`}>{item.name}</label>
-                {/* <FormControlLabel
+              <Grid item xs={12} className="descpAttributes">
+                <FormControlLabel
                   control={
                     <Checkbox
-                      inputRef={checkRef.current[key]}
                       checked={checkedItems.get(item.name)}
                       onChange={(e)=>{
                         handleChangeBrands(e, dataType)
@@ -143,7 +106,7 @@ export default function SidebarAccordion(props) {
                     />
                   }
                   label={item.name}
-                /> */}
+                />
               </Grid>
             ))}
           </Grid>

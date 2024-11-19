@@ -18,13 +18,11 @@ const ProductService = {
         return response;
     },
 
-    async getFilteredProducts(filters = {}) {
+    async getFilteredProducts(type = {}) {
         await ConfigService.loadSettings();
-        
-        filters.type = filters.type.type === undefined ? filters.type : filters.type.type;
 
         const params = {
-            'params': filters,
+            'params': type,
             'paramsSerializer': function (params) {
                 return qs.stringify(params, { arrayFormat: 'repeat' })
             }
@@ -44,13 +42,7 @@ const ProductService = {
         await ConfigService.loadSettings();
         const response = await axios.post(`${ConfigService._apiUrl}/products/imageclassifier`, formData, ConfigService.HeadersConfig(token));
         return response.data;
-    },
-
-    async getSearchResults(term) {
-        await ConfigService.loadSettings();
-        const response = await axios.get(`${ConfigService._apiUrl}/Products/search/${term}`, ConfigService.HeadersConfig(), { errorHandle: false });
-        return response.data;
-    },
+    }
 }
 
 export default ProductService;

@@ -1,5 +1,4 @@
-﻿using ContosoTraders.Api.Core.Models.Implementations.Dto;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Type = ContosoTraders.Api.Core.Models.Implementations.Dao.Type;
 
 namespace ContosoTraders.Api.Core.Services.Implementations;
@@ -8,7 +7,7 @@ internal class ProductService : ContosoTradersServiceBase, IProductService
 {
     private readonly ProductsDbContext _productRepository;
 
-    public ProductService(ProductsDbContext productDbContext, IMapper mapper, IConfiguration configuration, ILogger<ProductService> logger) : base(mapper, configuration, logger)
+    public ProductService(ProductsDbContext productDbContext, IMapper mapper, IConfiguration configuration) : base(mapper, configuration)
     {
         _productRepository = productDbContext;
     }
@@ -52,22 +51,11 @@ internal class ProductService : ContosoTradersServiceBase, IProductService
 
     public IEnumerable<ProductDto> GetProducts(string searchTerm)
     {
-        searchTerm = searchTerm.ToLower();
-
-        var allTypes = _productRepository.Types.ToArray();
-
-        var allFeatures = _productRepository.Features.ToArray();
-
-        var responseDaos = _productRepository.Products.AsEnumerable()
-            .Where(product => searchTerm.Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                .Any(term =>
-                    product.Name.ToLower().Contains(term) ||
-                    allTypes.FirstOrDefault(type => type.Id == product.TypeId).Name.ToLower().Contains(term) ||
-                    allFeatures.Where(feature => feature.ProductItemId == product.Id)
-                        .Any(item => item.Description.Contains(term))));
+        var responseDaos = _productRepository.Products
+            .Where(product => EF.Functions.Like(product.Name, $"%{searchTerm}%"));
 
         var responseDtos = responseDaos.ToArray()
-            .Select(dao => CustomMapping(dao, null, allTypes, null));
+            .Select(dao => CustomMapping(dao));
 
         return responseDtos;
     }
@@ -112,9 +100,26 @@ internal class ProductService : ContosoTradersServiceBase, IProductService
             Name = productDao.Name,
             Price = productDao.Price,
             ImageUrl = $"{imagesEndpoint}/{imagesType}/{productDao.ImageName}",
-            Brand = brands?.FirstOrDefault(brand => brand.Id == productDao.BrandId),
-            Type = types?.FirstOrDefault(type => type.Id == productDao.TypeId),
-            Features = features?.Where(feature => feature.ProductItemId == productDao.Id).ToList()
+            Brand = brands.FirstOrDefault(brand => brand.Id == productDao.BrandId),
+            Type = types.FirstOrDefault(type => type.Id == productDao.TypeId),
+            Features = features.Where(feature => feature.ProductItemId == productDao.Id).ToList()
+        };
+
+        return productDto;
+    }
+
+    private ProductDto CustomMapping(Product productDao, bool thumbnailImages = true)
+    {
+        var imagesEndpoint = Configuration[KeyVaultConstants.SecretNameImagesEndpoint];
+
+        var imagesType = thumbnailImages ? "product-list" : "product-details";
+
+        var productDto = new ProductDto
+        {
+            Id = productDao.Id,
+            Name = productDao.Name,
+            Price = productDao.Price,
+            ImageUrl = $"{imagesEndpoint}/{imagesType}/{productDao.ImageName}"
         };
 
         return productDto;

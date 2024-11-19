@@ -7,13 +7,9 @@ import { withRouter, useHistory } from "react-router-dom";
 const List = ({ typesList, brandsList, onFilterChecked, productsList, loggedIn }) => {
     const history = useHistory();
     const currentCategory = history.location.pathname.split("/").pop().replaceAll('-',' ');
-
     return (
         <div className="list">
-            {currentCategory === 'all products'?
-            <Breadcrump currentPath='Product Collection' />
-            :
-            <Breadcrump parentPath='Product Collection' parentUrl="/list/all-products" currentPath={currentCategory} />}
+            <Breadcrump parentPath='Product Collection' parentUrl="/list/all-products" currentPath={currentCategory} />
             <OfferBanner />
             <div className="list__content">
                 <h6 className="mainHeading">{currentCategory}</h6>

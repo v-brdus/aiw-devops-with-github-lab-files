@@ -1,18 +1,12 @@
 namespace ContosoTraders.Api.Core.Services.Implementations;
 
-internal class ImageSearchService : ContosoTradersServiceBase, IImageSearchService
+internal class ImageSearchService : IImageSearchService
 {
     private readonly IImageAnalysisService _imageAnalysisService;
 
     private readonly IProductService _productService;
 
-    public ImageSearchService(
-        IProductService productService,
-        IImageAnalysisService imageAnalysisService,
-        IMapper mapper,
-        IConfiguration configuration,
-        ILogger<ImageSearchService> logger)
-        : base(mapper, configuration, logger)
+    public ImageSearchService(IProductService productService, IImageAnalysisService imageAnalysisService)
     {
         _productService = productService;
         _imageAnalysisService = imageAnalysisService;
@@ -43,10 +37,8 @@ internal class ImageSearchService : ContosoTradersServiceBase, IImageSearchServi
             throw new MatchingProductsNotFoundException(searchTags);
         }
 
-        var productList = products
-                     .GroupBy(p => p.Id)
-                     .Select(p => p.First());
+        products = products.Distinct().ToList();
 
-        return productList;
+        return products;
     }
 }
