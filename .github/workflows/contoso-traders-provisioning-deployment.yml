@@ -90,7 +90,7 @@ jobs:
         with:
           login-server: ${{ env.ACR_NAME }}${{ secrets.ENVIRONMENT }}.azurecr.io
           username: ${{ env.ACR_NAME }}${{ secrets.ENVIRONMENT }}
-          password: ${{ steps.extract-acr-password.outputs.acrPassword }}
+          password: 2e+yC/6bJ2cArQltN4YT9QgkEWBKYaDMV91ZS2D4/n+ACRAyoyyu
       - name: docker build
         run: docker build src -f ./src/ContosoTraders.Api.Products/Dockerfile -t ${{ env.ACR_NAME }}${{ secrets.ENVIRONMENT }}.azurecr.io/${{ env.PRODUCTS_ACR_REPOSITORY_NAME }}:latest -t ${{ env.ACR_NAME }}${{ secrets.ENVIRONMENT }}.azurecr.io/${{ env.PRODUCTS_ACR_REPOSITORY_NAME }}:${{ github.sha }}
       - name: docker push (to acr)
